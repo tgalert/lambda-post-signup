@@ -46,7 +46,7 @@ If it's a new deployment, you have to set the Lambda trigger for the user pool i
 
 ## Local Testing
 
-It's possible to execute the Lambda function locally with the SAM CLI and some sample event data:
+The Lambda function can be invoked locally with the SAM CLI and some sample event data:
 
 ~~~bash
 sam local invoke --event event.json PostSignupFunction
