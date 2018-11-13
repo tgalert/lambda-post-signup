@@ -1,0 +1,24 @@
+{
+  "name": "tgsearch-lambda",
+  "version": "1.0.0",
+  "description": "This is an AWS Lambda application consisting of a single Lambda function that is invoked whenever a new user signs up to TG-Search.",
+  "main": "index.js",
+  "dependencies": {
+    "@kubernetes/client-node": "^0.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "sam package --template-file template.yml --output-template-file package.yml --s3-bucket quantumsense-sam && sam deploy --template-file package.yml --stack-name tgsearch-post-signup --capabilities CAPABILITY_IAM"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weibeld/tgsearch-lambda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/weibeld/tgsearch-lambda/issues"
+  },
+  "homepage": "https://github.com/weibeld/tgsearch-lambda#readme"
+}
