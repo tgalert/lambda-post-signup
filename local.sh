@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sam local invoke --no-event LambdaEksExampleFunction
+sam local invoke --no-event PostSignupFunction
