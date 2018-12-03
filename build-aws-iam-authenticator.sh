@@ -1,3 +1,3 @@
 #!/bin/bash
 
-GOOS=linux go build github.com/kubernetes-sigs/aws-iam-authenticator/cmd/aws-iam-authenticator
+GOOS=linux GOARCH=amd64 go build github.com/kubernetes-sigs/aws-iam-authenticator/cmd/aws-iam-authenticator
