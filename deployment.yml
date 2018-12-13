@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <DYNAMIC>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: weibeld/tg-monitor:core-0.0.1
+          env:
+            - name: MAILGUN_SENDING_ADDRESS
+              value: tgalert@quantumsense.ai
+            - name: MAILGUN_DOMAIN
+              value: quantumsense.ai
+            - name: MAILGUN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: telegram-creds
+                  key: MAILGUN_API_KEY
+            - name: TG_API_ID
+              valueFrom:
+                secretKeyRef:
+                  name: telegram-creds
+                  key: TG_API_ID
+            - name: TG_API_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: telegram-creds
+                  key: TG_API_HASH
+            - name: RABBITMQ_CREDS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-creds
+                  key: <DYNAMIC>
