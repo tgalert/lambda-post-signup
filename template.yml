@@ -1,8 +1,111 @@
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  RabbitMqCredentialsArn:
+    Type: String
+    Description: ARN of the RabbitMQ admin credentials secret in AWS Secrets Manager
+
 Resources:
   PostSignupFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: handler
       Runtime: go1.x
+      Policies:
+        - Version: '2012-10-17'
+          Statement: 
+            - Effect: Allow
+              Action: secretsmanager:GetSecretValue
+              Resource: !Ref RabbitMqCredentialsArn
+            - Effect: Allow
+              Action: ssm:GetParameter
+              Resource: '*'
+#      Role: !GetAtt PostSignupFunctionRole.Arn
+
+#  PostSignupFunctionRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+#      AssumeRolePolicyDocument:
+#        Version: '2012-10-17'
+#        Statement: 
+#          - Effect: Allow
+#            Principal: 
+#              Service: 
+#                - lambda.amazonaws.com
+#            Action: 
+#              - sts:AssumeRole
+#
+#  MyLambdaExecutionPolicy:
+#    Type: AWS::IAM::Policy
+#    Properties:
+#      PolicyName: MyLambdaExecutionPolicy
+#      Roles: 
+#        - !Ref PostSignupFunctionRole
+#      PolicyDocument:
+#        Version: '2012-10-17'
+#        Statement: 
+#          - Effect: Allow
+#            Resource: '*'
+#            Action:
+#              - logs:CreateLogGroup
+#              - logs:CreateLogStream
+#              - logs:PutLogEvents
+#          - Effect: Allow
+#            Action: secretsmanager:GetSecretValue
+#            Resource: arn:aws:secretsmanager:*:*:secret:*
+#          - Effect: Allow
+#            Action: ssm:GetParameter
+#            Resource: '*'
+#
+#  PostSignupFunctionRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+#      AssumeRolePolicyDocument:
+#        Version: "2012-10-17"
+#        Statement: 
+#          - Effect: "Allow"
+#            Principal: 
+#              Service: 
+#                - "lambda.amazonaws.com"
+#            Action: 
+#              - "sts:AssumeRole"
+#      Policies:
+#        - PolicyName: MyLambdaExecutionPolicy
+#          PolicyDocument:
+#            Version: "2012-10-17"
+#            Statement: 
+#              - Effect: "Allow"
+#                Action: "secretsmanager:GetSecretValue"
+#                Resource: "arn:aws:secretsmanager:*:*:secret:*"
+#              - Effect: "Allow"
+#                Action: "ssm:GetParameter"
+#                Resource: "*"
+#              - Effect: "Allow"
+#                Resource: "*"
+#                Action:
+#                  - "logs:CreateLogGroup"
+#                  - "logs:CreateLogStream"
+#                  - "logs:PutLogEvents"
+#
+## The ARN is needed for setting up the Kubernetes ConfigMap for authentication
+#Outputs:
+#  PostSignupFunctionRoleArn:
+#    Description: ARN of the PostSignupFunction execution role.
+#    Value: !GetAtt PostSignupFunctionRole.Arn
+#
+# In the end, create a script up.sh which deploys the Lambda application, then
+# gets the function role ARN, modifies the aws-auth ConfigMap of the cluster
+# (add function role ARN to mapRoles key and map to username), and finally
+# create a Role and RoleBinding in the cluster for this username that allows all
+# the Kubernetes actions that the Lambda function has to do (create deployments,
+# get/update secrets).
+#
+# - Deploying Lambda application
+#     - sam package... && sam deploy...
+# - Get the function role ARN
+#     - aws cloudformation describe-stacks --stack-name <NAME> --query "Stacks[0].Outputs"
+# - Get aws-auth ConfigMap
+#     - kubectl get configmap/aws-auth -n kube-system -o yaml
+# - Create Role and RoleBinding
+#     - kubectly create -f rbac.yml

@@ -1,25 +1,27 @@
-# Grant permission to create deployments to user 'lambda'
-# Usage: kubectl apply -f permissions.yml
+# RBAC role for lambda-post-signup
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: lambda-create-deployments
+  name: lambda-post-signup
   namespace: default
 rules:
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["create"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["create"]
+  - apiGroups: ["core"]
+    resources: ["secrets"]
+    verbs: ["get", "update"]
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: lambda-create-deployments
+  name: lambda-post-signup
   namespace: default
 subjects:
   - kind: User
-    name: lambda
+    name: lambda-post-signup
     apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: lambda-create-deployments
+  name: lambda-post-signup
   apiGroup: rbac.authorization.k8s.io
